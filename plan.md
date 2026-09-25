@@ -5,7 +5,8 @@ Ahrefs Brand Radar API'sinden AI görünürlük verisini çekip, Brand Radar ara
 
 **Repo:** `GRM-DAS-Brand-Radar-Api`
 **Proje kısaltması:** `BREX`
-**Branch kalıbı:** `BREX-<adım no>-<kısa açıklama>` (ör. `BREX-02-auth-test`)
+**Branch:** `main` üzerinde doğrudan değişiklik yapılmaz; her adım kendi branch'inde
+yürür. Branch adı adım başlarken belirlenir (ör. `dev/BREX-100-setup`).
 **Çıktı dosyası kalıbı:** `BREX_<YYYY-MM-DD>.xlsx`
 
 ---
@@ -193,16 +194,13 @@ Sayılar tutuyorsa (a) kullanılır → ~40 istek. Tutmuyorsa (b) → ~360 istek
 
 ## 9. Yol haritası
 
-| Adım | Branch | İş |
-|---|---|---|
-| 0 | `BREX-00-setup` | Ahrefs plan durumu netleştir, API key üret, `.env` kurulumu |
-| 1 | `BREX-01-auth-test` | `management/brand-radar-reports` ile bağlantı testi, `report_id` al |
-| 2 | `BREX-02-brand-list` | Marka adı + domain listesini doğrula ve sabitle |
-| 3 | `BREX-03-rotation-test` | §6'daki rotasyon testi, yöntem kararı |
-| 4 | `BREX-04-single-platform` | Tek platform (ChatGPT) için 4 endpoint'i çek, Excel'e yaz |
-| 5 | `BREX-05-all-platforms` | Tüm platformlara genişlet, `Total = Only + With Others` doğrulaması |
-| 6 | `BREX-06-tag-breakdown` | Tag kırılımı eklenecekse boyutu genişlet |
-| 7 | `BREX-07-scheduling` | Zamanlama (cron / task scheduler) ve hata bildirimi |
+| Adım | Branch | İş | Bitti sayılır |
+|---|---|---|---|
+| 1 | `dev/BREX-100-setup` | Kurulum + bağlantı testi: Ahrefs plan durumu, API key, `.env`; `management/brand-radar-reports` ile bağlantı testi, `report_id` al | Rapor listesi API'den dönüyor |
+| 2 | adım başında belirlenecek | Marka adı + domain listesini doğrula ve sabitle; §6'daki rotasyon testi ve yöntem kararı | Marka/domain listesi sabit, (a)/(b) yöntemi seçilmiş |
+| 3 | adım başında belirlenecek | Veri çekme + Excel: 4 endpoint, önce ChatGPT sonra tüm platformlar; `Total = Only + With Others` doğrulaması | Tarih adlı sheet §3 formatında yazılıyor |
+| 4 | adım başında belirlenecek | Zamanlama (cron / task scheduler) ve hata bildirimi | Otomatik çalışma + hata bildirimi aktif |
+| (5) | gerekirse belirlenecek | *Opsiyonel:* tag kırılımı. Çağrı sayısını tag sayısıyla çarpar; karar verilirse 3. adımın üzerine eklenir | — |
 
 ---
 
