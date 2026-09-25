@@ -51,7 +51,11 @@ plan.md          proje planı
 
 ## Notlar
 
-- Tüm Brand Radar veri çağrıları POST'tur (`citations-overview`'ın GET versiyonu yok).
-- `prompts="custom"` kodda sabittir; yalnızca custom prompt verisi dönen istekler unit tüketmez.
+- Brand Radar endpoint'lerinin çoğu hem GET hem POST destekliyor. Bu projede kullandığımız
+  Overview endpoint'lerinde POST tercih ediyoruz: marka tanımı iç içe nesne (`url_groups`) ve
+  query string'e sığmıyor, ayrıca `citations-overview` yalnızca POST destekliyor.
+- `prompts="custom"` client tarafında her Brand Radar isteğine zorunlu olarak eklenir; farklı bir
+  değer verilirse istek gönderilmeden hata verir. Yalnızca custom prompt verisi dönen istekler
+  unit tüketmez.
 - `main` üzerinde doğrudan değişiklik yapılmaz, her adım kendi branch'inde yürür.
 - Çıktı dosyaları (`*.xlsx`, `*.csv`, `outputs/`) marka verisi içerdiği için git'e girmez.
