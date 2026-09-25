@@ -1,4 +1,4 @@
-"""Ahrefs API istemcisi: Bearer auth, 429'da exponential backoff, diger hatalarda log + durdurma (plan §10)."""
+"""Ahrefs API client: Bearer auth, exponential backoff on 429, log + stop on other errors (plan §10)."""
 import logging
 
 import requests
@@ -14,13 +14,13 @@ class RateLimited(Exception):
 
 
 def _enforce_prompts(path: str, payload: dict | None) -> dict | None:
-    """Brand Radar isteklerine prompts="custom" zorunlu eklenir; baska deger unit yakar (plan §7)."""
+    """Force prompts="custom" on Brand Radar requests; any other value consumes units (plan §7)."""
     if not path.lstrip("/").startswith("brand-radar/"):
         return payload
     payload = dict(payload or {})
     prompts = payload.setdefault("prompts", config.PROMPTS)
     if prompts != config.PROMPTS:
-        raise ValueError(f'prompts="{prompts}" unit tuketir; yalnizca "{config.PROMPTS}" kullanilir.')
+        raise ValueError(f'prompts="{prompts}" consumes API units; only "{config.PROMPTS}" is allowed.')
     return payload
 
 
@@ -42,7 +42,7 @@ class AhrefsClient:
     def _request(self, method: str, url: str, **kwargs) -> dict:
         resp = self.session.request(method, url, timeout=self.timeout, **kwargs)
         if resp.status_code == 429:
-            log.warning("429 rate limit, tekrar denenecek: %s", url)
+            log.warning("429 rate limit, retrying: %s", url)
             raise RateLimited(url)
         if not resp.ok:
             log.error("%s %s -> %s: %s", method, url, resp.status_code, resp.text[:500])
@@ -56,5 +56,5 @@ class AhrefsClient:
         return self._request("POST", f"{config.API_ROOT}/{path.lstrip('/')}", json=_enforce_prompts(path, body))
 
     def list_reports(self) -> dict:
-        """Unit tuketmez; ilk baglanti testi icin (plan §7)."""
+        """Does not consume units; used for the initial connection test (plan §7)."""
         return self.get("management/brand-radar-reports")

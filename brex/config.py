@@ -1,4 +1,4 @@
-"""Ortam ayarlari. Key koda gomulmez, .env'den okunur (plan §10)."""
+"""Environment settings. The API key is never hardcoded; it is read from .env (plan §10)."""
 import os
 from pathlib import Path
 
@@ -10,7 +10,7 @@ load_dotenv(ROOT / ".env")
 API_ROOT = "https://api.ahrefs.com/v3"
 BRAND_RADAR_BASE = f"{API_ROOT}/brand-radar"
 
-# Plan §7: yalnizca custom prompt verisi unit tuketmez. client.py her brand-radar/ isteginde zorunlu kilar.
+# Plan §7: only custom prompt data is free of unit cost. client.py enforces this on every brand-radar/ request.
 PROMPTS = "custom"
 
 OUTPUT_DIR = ROOT / "outputs"
@@ -19,7 +19,7 @@ OUTPUT_DIR = ROOT / "outputs"
 def api_key() -> str:
     key = os.getenv("AHREFS_API_KEY", "").strip()
     if not key:
-        raise RuntimeError("AHREFS_API_KEY bulunamadi. .env.example'i .env olarak kopyalayip doldurun.")
+        raise RuntimeError("AHREFS_API_KEY not found. Copy .env.example to .env and fill it in.")
     return key
 
 

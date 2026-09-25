@@ -1,14 +1,14 @@
 # BREX — Brand Radar API → Excel Pipeline
 
-Ahrefs Brand Radar API'sinden marka ve rakiplerin AI görünürlük verisini (mention, citation,
-impression, share of voice) çekip Brand Radar "AI visibility / Platforms" export'uyla aynı
-yapıda bir Excel dosyasında biriktirir.
+Pulls AI visibility data (mentions, citations, impressions, share of voice) for a brand and its
+competitors from the Ahrefs Brand Radar API and accumulates it in an Excel file with the same
+structure as the Brand Radar "AI visibility / Platforms" export.
 
-Kapsam, endpoint eşlemesi, kısıtlar ve yol haritası için: [plan.md](plan.md)
+For scope, endpoint mapping, constraints and roadmap, see [plan.md](plan.md).
 
-## Kurulum
+## Setup
 
-Python 3.11+ gerekir.
+Requires Python 3.11+.
 
 ```powershell
 python -m venv .venv
@@ -16,46 +16,46 @@ python -m venv .venv
 Copy-Item .env.example .env
 ```
 
-`.env` dosyasını açıp doldurun:
+Open `.env` and fill it in:
 
 ```
 AHREFS_API_KEY=<Ahrefs API key>
-BREX_REPORT_ID=<rapor id>
+BREX_REPORT_ID=<report id>
 ```
 
-- `.env` git'e girmez (`.gitignore`). Key'i koda veya `.env.example`'a yazmayın.
-- `BREX_REPORT_ID` rapor URL'inden alınır: `app.ahrefs.com/brand-radar/reports/<report_id>/...`
-  Bilmiyorsanız bağlantı testi hesaptaki raporları listeler.
+- `.env` is never committed (`.gitignore`). Do not put the key in code or in `.env.example`.
+- `BREX_REPORT_ID` comes from the report URL: `app.ahrefs.com/brand-radar/reports/<report_id>/...`
+  If you don't know it, the connection test lists the reports in the account.
 
-## Bağlantı testi
+## Connection test
 
-Repo klasöründen çalıştırın:
+Run from the repo folder:
 
 ```powershell
 .\.venv\Scripts\python -m scripts.auth_test
 ```
 
-`management/brand-radar-reports` endpoint'ini çağırır (unit tüketmez) ve hesaptaki Brand Radar
-raporlarını JSON olarak basar.
+Calls the `management/brand-radar-reports` endpoint (does not consume units) and prints the
+account's Brand Radar reports as JSON.
 
-## Yapı
+## Structure
 
 ```
 brex/
-  config.py      .env okuma, sabitler (prompts="custom")
-  client.py      Ahrefs API istemcisi: Bearer auth, 429'da exponential backoff
+  config.py      .env loading, constants (prompts="custom")
+  client.py      Ahrefs API client: Bearer auth, exponential backoff on 429
 scripts/
-  auth_test.py   bağlantı testi
-plan.md          proje planı
+  auth_test.py   connection test
+plan.md          project plan (Turkish)
 ```
 
-## Notlar
+## Notes
 
-- Brand Radar endpoint'lerinin çoğu hem GET hem POST destekliyor. Bu projede kullandığımız
-  Overview endpoint'lerinde POST tercih ediyoruz: marka tanımı iç içe nesne (`url_groups`) ve
-  query string'e sığmıyor, ayrıca `citations-overview` yalnızca POST destekliyor.
-- `prompts="custom"` client tarafında her Brand Radar isteğine zorunlu olarak eklenir; farklı bir
-  değer verilirse istek gönderilmeden hata verir. Yalnızca custom prompt verisi dönen istekler
-  unit tüketmez.
-- `main` üzerinde doğrudan değişiklik yapılmaz, her adım kendi branch'inde yürür.
-- Çıktı dosyaları (`*.xlsx`, `*.csv`, `outputs/`) marka verisi içerdiği için git'e girmez.
+- Most Brand Radar endpoints support both GET and POST. For the Overview endpoints used in this
+  project we prefer POST: the brand definition is a nested object (`url_groups`) that doesn't fit
+  in a query string, and `citations-overview` only supports POST.
+- The client enforces `prompts="custom"` on every Brand Radar request; any other value raises an
+  error before the request is sent. Only requests that return custom prompt data are free of unit
+  cost.
+- No direct changes on `main`; each step runs on its own branch.
+- Output files (`*.xlsx`, `*.csv`, `outputs/`) contain brand data and are never committed.
