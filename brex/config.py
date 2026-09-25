@@ -10,7 +10,7 @@ load_dotenv(ROOT / ".env")
 API_ROOT = "https://api.ahrefs.com/v3"
 BRAND_RADAR_BASE = f"{API_ROOT}/brand-radar"
 
-# Plan §7: yalnizca custom prompt verisi unit tuketmez. Opsiyonel birakilmaz.
+# Plan §7: yalnizca custom prompt verisi unit tuketmez. client.py her brand-radar/ isteginde zorunlu kilar.
 PROMPTS = "custom"
 
 OUTPUT_DIR = ROOT / "outputs"

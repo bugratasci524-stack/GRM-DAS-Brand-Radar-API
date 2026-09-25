@@ -13,6 +13,17 @@ class RateLimited(Exception):
     pass
 
 
+def _enforce_prompts(path: str, payload: dict | None) -> dict | None:
+    """Brand Radar isteklerine prompts="custom" zorunlu eklenir; baska deger unit yakar (plan §7)."""
+    if not path.lstrip("/").startswith("brand-radar/"):
+        return payload
+    payload = dict(payload or {})
+    prompts = payload.setdefault("prompts", config.PROMPTS)
+    if prompts != config.PROMPTS:
+        raise ValueError(f'prompts="{prompts}" unit tuketir; yalnizca "{config.PROMPTS}" kullanilir.')
+    return payload
+
+
 class AhrefsClient:
     def __init__(self, api_key: str | None = None, timeout: int = 60):
         self.session = requests.Session()
@@ -39,10 +50,10 @@ class AhrefsClient:
         return resp.json()
 
     def get(self, path: str, params: dict | None = None) -> dict:
-        return self._request("GET", f"{config.API_ROOT}/{path.lstrip('/')}", params=params)
+        return self._request("GET", f"{config.API_ROOT}/{path.lstrip('/')}", params=_enforce_prompts(path, params))
 
     def post(self, path: str, body: dict) -> dict:
-        return self._request("POST", f"{config.API_ROOT}/{path.lstrip('/')}", json=body)
+        return self._request("POST", f"{config.API_ROOT}/{path.lstrip('/')}", json=_enforce_prompts(path, body))
 
     def list_reports(self) -> dict:
         """Unit tuketmez; ilk baglanti testi icin (plan §7)."""
