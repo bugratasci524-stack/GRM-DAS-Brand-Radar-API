@@ -1,0 +1,22 @@
+# Ortam degiskenleri / API key
+.env
+.env.*
+!.env.example
+
+# Cikti dosyalari (marka verisi icerir)
+*.xlsx
+*.csv
+outputs/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
