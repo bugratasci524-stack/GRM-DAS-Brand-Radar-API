@@ -1,9 +1,9 @@
-# Ortam degiskenleri / API key
+# Environment variables / API key
 .env
 .env.*
 !.env.example
 
-# Cikti dosyalari (marka verisi icerir)
+# Output files (contain brand data)
 *.xlsx
 *.csv
 outputs/
